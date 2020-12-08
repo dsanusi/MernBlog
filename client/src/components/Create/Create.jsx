@@ -37,22 +37,22 @@ const Create = () => {
     }
 
     return (
-        <div className="container pb-5">
+        <div>
             <Nav/>
             <br/>
             <h1>CREATE POST</h1>
             <br/>
             
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
+            <form style={{padding: '100px'}} onSubmit={handleSubmit}>
+                <div className="form-group row">
                     <label className="text-muted">Title</label>
                     <input onChange={handleChange('title')} value={title} type="text" className="form-control" placeholder="Post title" required/>
                 </div>
-                <div className="form-group">
+                <div className="form-group row">
                     <label className="text-muted">Content</label>
-                    <textarea onChange={handleChange('content')} value={content} type="text" className="form-control" placeholder="Write Something..." required/>
+                    <textarea onChange={handleChange('content')} value={content} type="text" className="form-control" placeholder="Write Something..." rows="50" required/>
                 </div>
-                <div className="form-group">
+                <div className="form-group row">
                     <label className="text-muted">User</label>
                     <input onChange={handleChange('user')} value={user} type="text" className="form-control" placeholder="Your name" required/>
                 </div>
