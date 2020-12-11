@@ -1,67 +1,108 @@
 import React, {useState} from 'react'
 import axios from 'axios'
 import Nav from "../nav/nav"
+import ReactQuill from 'react-quill'
+import {getUser, getToken} from '../helpers/helpers'
+import 'react-quill/dist/quill.bubble.css'
+
 
 const Create = () => {
+    // state
     const [state, setState] = useState({
-        //state
         title: '',
-        content:'',
-        user: ''
-    })
+        user: getUser()
+    });
+    const [content, setContent] = useState('');
+
+    // rich text editor handle change
+    const handleContent = event => {
+        console.log(event);
+        setContent(event);
+    };
+
     // destructure values from state
-    const {title,content, user} = state
+    const { title, user } = state;
 
-    //onchange event handler
-    const handleChange = (name) => (event) =>{
-        console.log("name", name,"event", event.target.value)
-        setState({...state,[name]:event.target.value})
-    }
+    // onchange event handler
+    const handleChange = name => event => {
+        // console.log('name', name, 'event', event.target.value);
+        setState({ ...state, [name]: event.target.value });
+    };
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        //console.table({title,content,user})
-        axios.post(`${process.env.REACT_APP_API}/post`, {title,content,user})
-        .then(response =>{
-            console.log(response)
-            //empty state
-            setState({...state, title:'', content:'', user:''})
-            // show success alert
-            alert(`Post titled ${response.data.title} is created`)
-
-        })
-        .catch(error => {
-            console.log(error.response)
-            alert(error.response.data.error)
-        })
-    }
+    const handleSubmit = event => {
+        event.preventDefault();
+        // console.table({ title, content, user });
+        axios
+            .post(
+                `${process.env.REACT_APP_API}/post`,
+                { title, content, user },
+                {
+                    headers: {
+                        authorization: `Bearer ${getToken()}`
+                    }
+                }
+            )
+            .then(response => {
+                console.log(response);
+                // empty state
+                setState({ ...state, title: '', user: '' });
+                setContent('');
+                // show sucess alert
+                alert(`Post titled ${response.data.title} is created`);
+            })
+            .catch(error => {
+                console.log(error.response);
+                alert(error.response.data.error);
+            });
+    };
 
     return (
         <div>
-            <Nav/>
-            <br/>
+            <Nav />
+            <br />
             <h1>CREATE POST</h1>
-            <br/>
-            
+            <br />
+
             <form style={{padding: '100px'}} onSubmit={handleSubmit}>
-                <div className="form-group row">
+                <div className="form-group">
                     <label className="text-muted">Title</label>
-                    <input onChange={handleChange('title')} value={title} type="text" className="form-control" placeholder="Post title" required/>
+                    <input
+                        onChange={handleChange('title')}
+                        value={title}
+                        type="text"
+                        className="form-control"
+                        placeholder="Post title"
+                        required
+                    />
                 </div>
-                <div className="form-group row">
+                <div className="form-group">
                     <label className="text-muted">Content</label>
-                    <textarea onChange={handleChange('content')} value={content} type="text" className="form-control" placeholder="Write Something..." rows="50" required/>
+                    <ReactQuill
+                        onChange={handleContent}
+                        value={content}
+                        theme="bubble"
+                        className="pb-5 mb-3"
+                        placeholder="Write something.."
+                        style={{ border: '1px solid #666' }}
+                    />
                 </div>
-                <div className="form-group row">
+                <div className="form-group">
                     <label className="text-muted">User</label>
-                    <input onChange={handleChange('user')} value={user} type="text" className="form-control" placeholder="Your name" required/>
+                    <input
+                        onChange={handleChange('user')}
+                        value={user}
+                        type="text"
+                        className="form-control"
+                        placeholder="Your name"
+                        required
+                    />
                 </div>
                 <div>
                     <button className="btn btn-primary">Create</button>
                 </div>
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default Create
+export default Create;

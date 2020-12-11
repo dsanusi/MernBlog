@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from 'react'
 import axios from 'axios'
 import Nav from '../nav/nav'
-
+import  renderHTML from 'react-render-html'
 const SinglePost = (props) => {
     const [post,setPost] = useState('')
 
@@ -17,7 +17,7 @@ const SinglePost = (props) => {
             <Nav/>
             <br/>
             <h1>{post.title}</h1>
-            <p className="lead">{post.content}</p>
+            <div className="lead">{renderHTML(post && post.content)}</div>
             <p>Author: {post.user} Published on{' '}
             {new Date(post.createdAt).toLocaleString()}
             </p>

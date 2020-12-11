@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Nav from "./components/nav/nav"
 import axios from 'axios'
 import {Link} from 'react-router-dom'
+import renderHTML from 'react-render-html'
+import {getUser, getToken} from './components/helpers/helpers'
 
 const App = () => {
   const [posts, setPosts] = useState([])
@@ -28,7 +30,13 @@ const App = () => {
 
   const deletePost = (slug) => {
     //console.log('delete', slug, 'post')
-    axios.delete(`${process.env.REACT_APP_API}/post/${slug}`)
+    axios.delete(`${process.env.REACT_APP_API}/post/${slug}`, 
+    {
+      headers: {
+          authorization: `Bearer ${getToken()}`
+      }
+  }
+    )
     .then(response => {
       alert(response.data.message)
       fetchPosts()
@@ -53,7 +61,7 @@ const App = () => {
                 <div className="card-content">
                   <div>
                     <h2>{post.title}</h2>
-                    <p className="lead">{post.content.substring(0,50)}</p>
+                    <div className="lead">{renderHTML(post && post.content.substring(0,50))}</div>
                     <p>Author: {post.user} </p>
                     <p>Published on{' '}
                     {new Date(post.createdAt).toLocaleString()}
@@ -62,12 +70,12 @@ const App = () => {
                 </div>
                 </Link>
               </div>
-              <div style={{padding: '100px 0px 0px 500px'}}>
+              {getUser() && (<div style={{padding: '100px 0px 0px 500px'}}>
                     <Link to={`/post/update/${post.slug}`} className="btn btn-sm btn-outline-warning ml-1 btn-inline">
                       Update
                     </Link>
                     <button onClick= {() =>deleteConfirm(post.slug)}className="btn btn-sm btn-outline-danger ml-1 btn-inline">Delete</button>
-              </div>
+              </div>)}
             </div>
           </div>
           <br/>
